@@ -1,0 +1,23 @@
+# HPC sync configuration
+# ─────────────────────────────────────────────────────────────────────────────
+# Copy this file to hpc/sync.conf and fill in your values.
+# sync.conf is gitignored — it lives only on your local machine.
+#
+# Once set, $HPC_BASE/$PROJECT_NAME is equivalent to $PROJECT_PATH used
+# inside the SLURM batch scripts, so activation and script paths stay consistent.
+#
+# You can also export these as environment variables instead:
+#   export HPC_HOST=euclid_jump
+#   export HPC_BASE=/mnt/ral/jnightin
+#   hpc/sync push
+# ─────────────────────────────────────────────────────────────────────────────
+
+# SSH host alias (from ~/.ssh/config) or user@hostname
+HPC_HOST=euclid_jump
+
+# Base directory on the HPC under which all your projects sit.
+# The full remote path will be $HPC_BASE/$PROJECT_NAME.
+HPC_BASE=/mnt/ral/jnightin
+
+# Name of this project on the HPC (defaults to the local folder name if unset).
+PROJECT_NAME=base_project

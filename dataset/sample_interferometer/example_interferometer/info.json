@@ -1,0 +1,6 @@
+{
+    "pixel_scale": 0.1,
+    "n_batch": 25,
+    "real_space_shape": [256, 256],
+    "mask_radius": 3.5
+}

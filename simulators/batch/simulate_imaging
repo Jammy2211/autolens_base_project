@@ -1,0 +1,19 @@
+#!/bin/bash -l
+
+#SBATCH -J simulate_0
+#SBATCH -n 1
+#SBATCH --ntasks=5
+#SBATCH --cpus-per-task=1
+#SBATCH -o output/output.%A.out
+#SBATCH -e error/error.%A.err
+#SBATCH -p ral
+#SBATCH -t 06:00:00   # longest job
+#SBATCH --mem=64gb
+#SBATCH --mail-type=END                      # notifications for job done & fail
+#SBATCH --mail-user=james.w.nightingale@durham.ac.uk
+
+source /mnt/ral/jnightin/profiling/activate.sh
+
+export JAX_PLATFORMS=cpu
+
+srun -n 5 --multi-prog simulate_imaging.conf

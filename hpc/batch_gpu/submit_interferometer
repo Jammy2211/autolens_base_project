@@ -1,0 +1,63 @@
+#!/bin/bash -l
+
+#SBATCH -J base_interferometer
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=32gb
+#SBATCH --time=08:00:00
+#SBATCH --array=0-0
+#SBATCH -o output/output.%A_%a.out
+#SBATCH -e error/error.%A_%a.err
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=james.w.nightingale@durham.ac.uk
+
+# -------------------------------
+# Environment
+#
+# Set PROJECT_PATH before submitting:
+#   export PROJECT_PATH=/path/to/your/project
+# -------------------------------
+source $PROJECT_PATH/activate.sh
+
+# -------------------------------
+# Sample
+#
+# The sample is the subdirectory inside dataset/ that contains the datasets.
+# -------------------------------
+sample=sample
+
+# -------------------------------
+# Dataset list
+#
+# Each entry is the name of a subdirectory inside dataset/$sample/.
+# Update --array above to match the number of datasets (0 to N-1).
+# -------------------------------
+datasets=(
+example_interferometer
+)
+
+# -------------------------------
+# Select dataset for this array task
+# -------------------------------
+INDEX=$SLURM_ARRAY_TASK_ID
+dataset="${datasets[$INDEX]}"
+
+echo "=========================================="
+echo "Array job index: $INDEX"
+echo "Sample: $sample"
+echo "Dataset: $dataset"
+date
+nvidia-smi
+
+# -------------------------------
+# Run the analysis script.
+#
+# All path management is handled inside scripts/interferometer.py via Path(__file__).
+# pixel_scale and n_batch are read from dataset/$sample/$dataset/info.json automatically.
+# -------------------------------
+python3 $PROJECT_PATH/scripts/interferometer.py --sample=$sample --dataset=$dataset
+
+echo "Finished dataset: $dataset"
+date

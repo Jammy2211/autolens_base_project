@@ -1,0 +1,74 @@
+#!/bin/bash -l
+
+#SBATCH -J base_imaging_cpu
+#SBATCH -n 1
+#SBATCH --cpus-per-task=8
+#SBATCH -o output/output.%A_%a.out
+#SBATCH -e error/error.%A_%a.err
+#SBATCH --partition=cpu
+#SBATCH -t 18:00:00
+#SBATCH --mem=64gb
+#SBATCH --array=0-0
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=james.w.nightingale@durham.ac.uk
+
+# -------------------------------
+# Environment
+#
+# Set PROJECT_PATH before submitting:
+#   export PROJECT_PATH=/path/to/your/project
+# -------------------------------
+source $PROJECT_PATH/activate.sh
+
+# Force JAX to use CPU only (no GPU)
+export JAX_PLATFORM_NAME=cpu
+export JAX_PLATFORMS=cpu
+
+# Pin thread counts to the allocated CPUs
+THREADS=$SLURM_CPUS_PER_TASK
+export OPENBLAS_NUM_THREADS=$THREADS
+export MKL_NUM_THREADS=$THREADS
+export OMP_NUM_THREADS=$THREADS
+export VECLIB_MAXIMUM_THREADS=$THREADS
+export NUMEXPR_NUM_THREADS=$THREADS
+export NPROC=$THREADS
+
+# -------------------------------
+# Sample
+#
+# The sample is the subdirectory inside dataset/ that contains the datasets.
+# -------------------------------
+sample=sample
+
+# -------------------------------
+# Dataset list
+#
+# Each entry is the name of a subdirectory inside dataset/$sample/.
+# Update --array above to match the number of datasets (0 to N-1).
+# -------------------------------
+datasets=(
+example
+)
+
+# -------------------------------
+# Select dataset for this array task
+# -------------------------------
+INDEX=$SLURM_ARRAY_TASK_ID
+dataset="${datasets[$INDEX]}"
+
+echo "=========================================="
+echo "Array job index: $INDEX"
+echo "Sample: $sample"
+echo "Dataset: $dataset"
+date
+
+# -------------------------------
+# Run the analysis script.
+#
+# All path management is handled inside scripts/imaging.py via Path(__file__).
+# pixel_scale and n_batch are read from dataset/$sample/$dataset/info.json automatically.
+# -------------------------------
+python3 $PROJECT_PATH/scripts/imaging.py --sample=$sample --dataset=$dataset
+
+echo "Finished dataset: $dataset"
+date
