@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# HPC sync config — machine-specific, contains personal paths
+hpc/sync.conf
+
+# PyAutoFit output — generated, typically too large to commit
+output/

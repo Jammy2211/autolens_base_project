@@ -118,14 +118,16 @@ def run_0__group(
     analysis: Union[al.AnalysisImaging, al.AnalysisInterferometer],
     lens_galaxy_models: list,
     extra_galaxies: Optional[af.Collection] = None,
+    scaling_galaxies: Optional[af.Collection] = None,
+    dataset_model: Optional[af.Model] = None,
 ) -> af.Result:
     """
     An initial SOURCE LP search used for group-scale lenses, which fits only the lens
     light profiles (one per main lens galaxy) with no mass model or source galaxy.
 
     This provides a clean initialization of all light components — and measured
-    luminosities for each extra galaxy — before the mass model and source are introduced
-    in `run_group`.
+    luminosities for each extra and scaling galaxy — before the mass model and source
+    are introduced in `run_group`.
 
     Parameters
     ----------
@@ -138,18 +140,25 @@ def run_0__group(
         containing only light profiles (bulge/disk/point) with no mass component.
         Built by the caller so that centres and priors can be set per-lens.
     extra_galaxies
-        Extra galaxies with free-centre light profiles to be fit alongside the main
-        lenses (renamed from ``extra_galaxies``).
+        Nearby extra galaxies with free-centre light profiles.
+    scaling_galaxies
+        More distant galaxies with free-centre light profiles whose luminosities are
+        later used to set Einstein radii via a shared scaling relation.  Kept separate
+        from ``extra_galaxies`` so the two populations remain distinguishable when
+        building stage-1 models.
     """
     lens_dict = {f"lens_{i}": m for i, m in enumerate(lens_galaxy_models)}
 
     model = af.Collection(
         galaxies=af.Collection(**lens_dict),
         extra_galaxies=extra_galaxies,
+        scaling_galaxies=scaling_galaxies,
+        dataset_model=dataset_model,
     )
 
     n_extra = len(extra_galaxies) if extra_galaxies is not None else 0
-    n_live = 100 + 30 * len(lens_galaxy_models) + 30 * n_extra
+    n_scaling = len(scaling_galaxies) if scaling_galaxies is not None else 0
+    n_live = 100 + 30 * len(lens_galaxy_models) + 30 * n_extra + 30 * n_scaling
 
     search = af.Nautilus(
         name="source_lp[0]",
@@ -218,6 +227,7 @@ def run_group(
         disk=source_disk,
     )
 
+
     model = af.Collection(
         galaxies=af.Collection(**lens_dict),
         extra_galaxies=extra_galaxies,
@@ -226,7 +236,8 @@ def run_group(
     )
 
     n_extra = len(extra_galaxies) if extra_galaxies is not None else 0
-    n_live = 150 + 30 * len(lens_galaxy_models) + 30 * n_extra
+    n_scaling = len(scaling_galaxies) if scaling_galaxies is not None else 0
+    n_live = 150 + 30 * len(lens_galaxy_models) + 30 * n_extra + 30 * n_scaling
 
     search = af.Nautilus(
         name="source_lp[1]",

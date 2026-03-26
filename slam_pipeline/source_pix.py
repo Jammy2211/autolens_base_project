@@ -121,6 +121,203 @@ def run_1(
     return result
 
 
+def run_1_group(
+    settings_search: af.SettingsSearch,
+    analysis: Union[al.AnalysisImaging, al.AnalysisInterferometer],
+    source_lp_result: af.Result,
+    mesh_init: af.Model(al.AbstractMesh) = af.Model(al.mesh.Delaunay),
+    regularization_init: af.Model(al.AbstractRegularization) = af.Model(
+        al.reg.AdaptSplit
+    ),
+    extra_galaxies: Optional[af.Collection] = None,
+    scaling_galaxies: Optional[af.Collection] = None,
+    dataset_model: Optional[af.Model] = None,
+    fixed_mass_model: bool = False,
+    n_batch: int = 20,
+) -> af.Result:
+    """
+    The first SLaM SOURCE PIX PIPELINE for group-scale lenses with multiple main lens
+    galaxies.
+
+    Group-scale counterpart to ``run_1``.  The number of main lenses is inferred from
+    the result so the function works for any number of lenses.
+
+    For each main lens:
+      - bulge / disk / point fixed to SOURCE LP result instances.
+      - mass and shear free, chained from SOURCE LP result model
+        (or fixed if ``fixed_mass_model=True``).
+
+    Parameters
+    ----------
+    settings_search
+        AutoFit settings controlling output paths and search configuration.
+    analysis
+        The analysis class containing the log-likelihood function.
+    source_lp_result
+        Result of ``source_lp.run_group``.  Must contain ``galaxies.lens_0``, etc.
+    mesh_init
+        Mesh used by the pixelization in this initialization search.
+    regularization_init
+        Regularization scheme used in this initialization search.
+    extra_galaxies
+        Combined extra + scaling galaxy collection passed through from the caller.
+    dataset_model
+        Optional dataset-level model components.
+    fixed_mass_model
+        If ``True``, fix mass and shear to the SOURCE LP instance rather than
+        treating them as free models.
+    """
+    n_lenses = sum(
+        1 for k in vars(source_lp_result.instance.galaxies) if k.startswith("lens_")
+    )
+
+    lens_dict = {}
+    for i in range(n_lenses):
+        lp_lens_instance = getattr(source_lp_result.instance.galaxies, f"lens_{i}")
+        lp_lens_model = getattr(source_lp_result.model.galaxies, f"lens_{i}")
+
+        if not fixed_mass_model:
+            mass = al.util.chaining.mass_from(
+                mass=lp_lens_model.mass,
+                mass_result=lp_lens_model.mass,
+                unfix_mass_centre=True,
+            )
+            shear = lp_lens_model.shear
+        else:
+            mass = lp_lens_instance.mass
+            shear = lp_lens_instance.shear
+
+        lens_dict[f"lens_{i}"] = af.Model(
+            al.Galaxy,
+            redshift=lp_lens_instance.redshift,
+            bulge=lp_lens_instance.bulge,
+            disk=lp_lens_instance.disk,
+            point=lp_lens_instance.point,
+            mass=mass,
+            shear=shear,
+        )
+
+    lens_dict["source"] = af.Model(
+        al.Galaxy,
+        redshift=source_lp_result.instance.galaxies.source.redshift,
+        pixelization=af.Model(
+            al.Pixelization,
+            mesh=mesh_init,
+            regularization=regularization_init,
+        ),
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(**lens_dict),
+        extra_galaxies=extra_galaxies,
+        scaling_galaxies=scaling_galaxies,
+        dataset_model=dataset_model,
+    )
+
+    # n_live scales with the number of free mass models.
+    n_live = 150 + 50 * (n_lenses - 1)
+
+    search = af.Nautilus(
+        name="source_pix[1]",
+        **settings_search.search_dict,
+        n_live=n_live,
+        n_batch=n_batch,
+    )
+
+    result = search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+    return result
+
+
+def run_2_group(
+    settings_search: af.SettingsSearch,
+    analysis: Union[al.AnalysisImaging, al.AnalysisInterferometer],
+    source_lp_result: af.Result,
+    source_pix_result_1: af.Result,
+    mesh: af.Model(al.AbstractMesh) = af.Model(al.mesh.Delaunay),
+    regularization: af.Model(al.AbstractRegularization) = af.Model(al.reg.AdaptSplit),
+    dataset_model: Optional[af.Model] = None,
+    n_batch: int = 20,
+) -> af.Result:
+    """
+    The second SLaM SOURCE PIX PIPELINE for group-scale lenses with multiple main lens
+    galaxies.
+
+    Group-scale counterpart to ``run_2``.  All lens components are fixed; only the
+    pixelization mesh and regularization are free.
+
+    For each main lens:
+      - bulge / disk / point fixed to SOURCE LP result instances.
+      - mass and shear fixed to SOURCE PIX[1] result instances.
+
+    ``extra_galaxies`` are taken directly from ``source_pix_result_1.instance``,
+    matching the behaviour of the single-lens ``run_2``.
+
+    Parameters
+    ----------
+    settings_search
+        AutoFit settings controlling output paths and search configuration.
+    analysis
+        The analysis class containing the log-likelihood function.
+    source_lp_result
+        Result of ``source_lp.run_group``.  Provides light and source redshift.
+    source_pix_result_1
+        Result of ``run_1_group``.  Provides fixed mass/shear and extra_galaxies.
+    mesh
+        Final mesh for the pixelization.
+    regularization
+        Final regularization scheme.
+    dataset_model
+        Optional dataset-level model components.
+    """
+    n_lenses = sum(
+        1 for k in vars(source_lp_result.instance.galaxies) if k.startswith("lens_")
+    )
+
+    lens_dict = {}
+    for i in range(n_lenses):
+        lp_lens_instance = getattr(source_lp_result.instance.galaxies, f"lens_{i}")
+        pix1_lens_instance = getattr(source_pix_result_1.instance.galaxies, f"lens_{i}")
+
+        lens_dict[f"lens_{i}"] = af.Model(
+            al.Galaxy,
+            redshift=lp_lens_instance.redshift,
+            bulge=lp_lens_instance.bulge,
+            disk=lp_lens_instance.disk,
+            point=lp_lens_instance.point,
+            mass=pix1_lens_instance.mass,
+            shear=pix1_lens_instance.shear,
+        )
+
+    lens_dict["source"] = af.Model(
+        al.Galaxy,
+        redshift=source_lp_result.instance.galaxies.source.redshift,
+        pixelization=af.Model(
+            al.Pixelization,
+            mesh=mesh,
+            regularization=regularization,
+        ),
+    )
+
+    model = af.Collection(
+        galaxies=af.Collection(**lens_dict),
+        extra_galaxies=source_pix_result_1.instance.extra_galaxies,
+        scaling_galaxies=source_pix_result_1.instance.scaling_galaxies,
+        dataset_model=dataset_model,
+    )
+
+    search = af.Nautilus(
+        name="source_pix[2]",
+        **settings_search.search_dict,
+        n_live=75,
+        n_batch=n_batch,
+    )
+
+    result = search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
+
+    return result
+
+
 def run_2(
     settings_search: af.SettingsSearch,
     analysis: Union[al.AnalysisImaging, al.AnalysisInterferometer],
@@ -322,3 +519,4 @@ def run_1__bypass_lp(
     result = search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
 
     return result
+
