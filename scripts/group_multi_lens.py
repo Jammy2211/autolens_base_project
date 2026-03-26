@@ -592,10 +592,6 @@ def fit(dataset_name, sample_name):
     Scaling galaxies: light fixed from light[1], mass driven by a shared free
     scaling relation (scaling_factor and scaling_relation both free).
     """
-    tracer_light = (
-        light_result.max_log_likelihood_fit.tracer_linear_light_profiles_to_light_profiles
-    )
-
     # --- extra galaxies: fixed light, free mass ---
     extra_lens_mass_free_list = []
     for i in range(n_extra):
@@ -607,7 +603,7 @@ def fit(dataset_name, sample_name):
 
         luminosity_per_gaussian_list = [
             2 * np.pi * g.sigma**2 / g.axis_ratio() * g.intensity
-            for g in tracer_light.galaxies[n_main + i].bulge.profile_list
+            for g in light_extra.bulge.profile_list
         ]
         total_luminosity = np.sum(luminosity_per_gaussian_list) / pixel_scale**2
         mass.einstein_radius = af.UniformPrior(
@@ -639,7 +635,7 @@ def fit(dataset_name, sample_name):
 
         luminosity_per_gaussian_list = [
             2 * np.pi * g.sigma**2 / g.axis_ratio() * g.intensity
-            for g in tracer_light.galaxies[n_main + n_extra + i].bulge.profile_list
+            for g in light_scaling.bulge.profile_list
         ]
         total_luminosity = np.sum(luminosity_per_gaussian_list) / pixel_scale**2
         mass.einstein_radius = scaling_factor * total_luminosity**scaling_relation
