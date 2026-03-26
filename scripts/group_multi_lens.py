@@ -584,9 +584,79 @@ def fit(dataset_name, sample_name):
 
     Fits a PowerLaw total mass distribution for every main lens simultaneously.
     Mass priors are chained from source_pix[1].  Light is fixed from light[1].
-    Source is fixed from source_pix[2].  Extra and scaling galaxies are fully
-    fixed from light[1].
+    Source is fixed from source_pix[2].
+
+    Extra galaxies: light fixed from light[1], mass free (Isothermal, centre
+    fixed to bulge centre, einstein_radius bounded by luminosity).
+
+    Scaling galaxies: light fixed from light[1], mass driven by a shared free
+    scaling relation (scaling_factor and scaling_relation both free).
     """
+    tracer_light = (
+        light_result.max_log_likelihood_fit.tracer_linear_light_profiles_to_light_profiles
+    )
+
+    # --- extra galaxies: fixed light, free mass ---
+    extra_lens_mass_free_list = []
+    for i in range(n_extra):
+        light_extra = light_result.instance.extra_galaxies[i]
+
+        mass = af.Model(al.mp.Isothermal)
+        mass.centre = light_extra.bulge.centre
+        mass.ell_comps = light_extra.bulge.ell_comps
+
+        luminosity_per_gaussian_list = [
+            2 * np.pi * g.sigma**2 / g.axis_ratio() * g.intensity
+            for g in tracer_light.galaxies[n_main + i].bulge.profile_list
+        ]
+        total_luminosity = np.sum(luminosity_per_gaussian_list) / pixel_scale**2
+        mass.einstein_radius = af.UniformPrior(
+            lower_limit=0.0,
+            upper_limit=min(5 * 0.5 * total_luminosity**0.6, 5.0),
+        )
+
+        extra_lens_mass_free_list.append(
+            af.Model(
+                al.Galaxy, redshift=redshift_lens, bulge=light_extra.bulge, mass=mass
+            )
+        )
+
+    extra_galaxies_mass_free = (
+        af.Collection(extra_lens_mass_free_list) if extra_lens_mass_free_list else None
+    )
+
+    # --- scaling galaxies: fixed light, free shared scaling relation ---
+    scaling_factor = af.UniformPrior(lower_limit=0.0, upper_limit=0.5)
+    scaling_relation = af.UniformPrior(lower_limit=0.0, upper_limit=2.0)
+
+    scaling_mass_free_list = []
+    for i in range(len(scaling_lens_centres)):
+        light_scaling = light_result.instance.scaling_galaxies[i]
+
+        mass = af.Model(al.mp.Isothermal)
+        mass.centre = light_scaling.bulge.centre
+        mass.ell_comps = light_scaling.bulge.ell_comps
+
+        luminosity_per_gaussian_list = [
+            2 * np.pi * g.sigma**2 / g.axis_ratio() * g.intensity
+            for g in tracer_light.galaxies[n_main + n_extra + i].bulge.profile_list
+        ]
+        total_luminosity = np.sum(luminosity_per_gaussian_list) / pixel_scale**2
+        mass.einstein_radius = scaling_factor * total_luminosity**scaling_relation
+
+        scaling_mass_free_list.append(
+            af.Model(
+                al.Galaxy,
+                redshift=redshift_lens,
+                bulge=light_scaling.bulge,
+                mass=mass,
+            )
+        )
+
+    scaling_galaxies_mass_free = (
+        af.Collection(scaling_mass_free_list) if scaling_mass_free_list else None
+    )
+
     analysis = al.AnalysisImaging(
         dataset=dataset,
         positions_likelihood_list=[
@@ -602,8 +672,8 @@ def fit(dataset_name, sample_name):
         source_result_for_lens=source_pix_result_1,
         source_result_for_source=source_pix_result_2,
         light_result=light_result,
-        extra_galaxies=light_result.instance.extra_galaxies,
-        scaling_galaxies=light_result.instance.scaling_galaxies,
+        extra_galaxies=extra_galaxies_mass_free,
+        scaling_galaxies=scaling_galaxies_mass_free,
         n_batch=info.get("n_batch", 20),
     )
 
