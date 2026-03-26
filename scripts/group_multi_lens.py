@@ -531,7 +531,10 @@ def fit(dataset_name, sample_name):
     light model that can properly separate lens from source once the mass model is
     well-constrained.
     """
-    analysis = al.AnalysisImaging(dataset=dataset)
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        adapt_images=adapt_images,
+    )
 
     lens_bulge_list = []
     for i in range(len(main_lens_centres)):
@@ -546,23 +549,63 @@ def fit(dataset_name, sample_name):
         )
         lens_bulge_list.append(bulge)
 
+    # --- extra lens galaxy light models ---
+    extra_lens_light_list = []
+    for i, centre in enumerate(extra_lens_centres):
+        bulge = al.model_util.mge_model_from(
+            mask_radius=mask_radius,
+            total_gaussians=10,
+            centre_prior_is_uniform=False,
+            centre=(centre[0], centre[1]),
+            centre_sigma=0.1,
+        )
+        mass = source_pix_result_1.instance.extra_galaxies[i].mass
+        extra_lens_light_list.append(
+            af.Model(al.Galaxy, redshift=redshift_lens, bulge=bulge, mass=mass)
+        )
+
+    extra_galaxies_free = (
+        af.Collection(extra_lens_light_list) if extra_lens_light_list else None
+    )
+
     light_result = slam_pipeline.light_lp.run_group(
         settings_search=settings_search,
         analysis=analysis,
-        source_result_for_lens=source_pix_result_2,
+        source_result_for_lens=source_pix_result_1,
         source_result_for_source=source_pix_result_2,
         lens_bulge_list=lens_bulge_list,
-        extra_galaxies=source_pix_result_2.instance.extra_galaxies,
+        extra_galaxies=extra_galaxies_free,
         scaling_galaxies=source_pix_result_2.instance.scaling_galaxies,
         n_batch=info.get("n_batch", 20),
     )
 
     """
-    __SUBSEQUENT STAGES__
+    __MASS TOTAL PIPELINE__
 
-    mass_total.run_group will be added here once that pipeline function is
-    implemented.
+    Fits a PowerLaw total mass distribution for every main lens simultaneously.
+    Mass priors are chained from source_pix[1].  Light is fixed from light[1].
+    Source is fixed from source_pix[2].  Extra and scaling galaxies are fully
+    fixed from light[1].
     """
+    analysis = al.AnalysisImaging(
+        dataset=dataset,
+        positions_likelihood_list=[
+            light_result.positions_likelihood_from(
+                factor=3.0, positions=positions, minimum_threshold=0.2
+            )
+        ],
+    )
+
+    mass_result = slam_pipeline.mass_total.run_group(
+        settings_search=settings_search,
+        analysis=analysis,
+        source_result_for_lens=source_pix_result_1,
+        source_result_for_source=source_pix_result_2,
+        light_result=light_result,
+        extra_galaxies=light_result.instance.extra_galaxies,
+        scaling_galaxies=light_result.instance.scaling_galaxies,
+        n_batch=info.get("n_batch", 20),
+    )
 
     return (
         source_lp_result_0,
@@ -570,6 +613,7 @@ def fit(dataset_name, sample_name):
         source_pix_result_1,
         source_pix_result_2,
         light_result,
+        mass_result,
     )
 
 
