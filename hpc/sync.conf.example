@@ -20,4 +20,4 @@ HPC_HOST=euclid_jump
 HPC_BASE=/mnt/ral/jnightin
 
 # Name of this project on the HPC (defaults to the local folder name if unset).
-PROJECT_NAME=base_project
+PROJECT_NAME=autolens_base_project
