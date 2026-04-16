@@ -1,0 +1,59 @@
+#!/bin/bash -l
+
+#SBATCH -J group
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=32gb
+#SBATCH --time=30:00:00
+#SBATCH --array=0-0
+#SBATCH -o output/output.%A_%a.out
+#SBATCH -e error/error.%A_%a.err
+#SBATCH --mail-type=END,FAIL
+#SBATCH --mail-user=c4072114@newcastle.ac.uk
+
+cd /mnt/ral/c4072114/PyAuto/autolens_base_project
+
+# -------------------------------
+# Environment
+#
+# Set PROJECT_PATH before submitting:
+#   export PROJECT_PATH=/path/to/your/project
+# -------------------------------
+source /mnt/ral/c4072114/venvs/PyAuto_JAX/bin/activate
+export JAX_ENABLE_X64=True
+
+# -------------------------------
+# Dataset list
+#
+# Each entry is the name of a subdirectory inside dataset/.
+# Omit --dataset entirely if the project has a single dataset.
+# Update --array above to match the number of datasets (0 to N-1).
+ -------------------------------
+datasets=(
+sample_group
+)
+
+# -------------------------------
+# Select dataset for this array task
+# -------------------------------
+INDEX=$SLURM_ARRAY_TASK_ID
+dataset="${datasets[$INDEX]}"
+
+echo "=========================================="
+echo "Array job index: $INDEX"
+echo "Dataset: $dataset"
+date
+nvidia-smi
+
+# -------------------------------
+# Run the analysis script.
+#
+# All path management is handled inside scripts/base.py via Path(__file__).
+# pixel_scale and n_batch are read from dataset/$dataset/info.json automatically.
+# -------------------------------
+python3 $PROJECT_PATH/scripts/group/slam.py #--dataset=$dataset
+
+echo "Finished dataset: $dataset"
+date
