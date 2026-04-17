@@ -776,7 +776,7 @@ def mass_total(
         total_luminosity = np.sum(luminosity_per_gaussian_list) / pixel_scale**2
         mass.einstein_radius = af.UniformPrior(
             lower_limit=0.0,
-            upper_limit=min(5 * 0.5 * total_luminosity**0.6, 5.0),
+            upper_limit=min(5 * 0.5 * total_luminosity**0.6, 2 * light_extra.mass.einstein_radius),
         )
 
         extra_mass_models.append(
