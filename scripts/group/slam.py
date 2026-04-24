@@ -200,7 +200,7 @@ def source_lp_0(
         **settings_search.search_dict,
         n_live=n_live,
         n_batch=n_batch,
-        n_like_max=1000000,
+        n_like_max=250000,
     )
 
     return search.fit(model=model, analysis=analysis, **settings_search.fit_dict)
@@ -872,7 +872,7 @@ __Dataset__
 
 Load, plot and mask the `Imaging` data.
 """
-dataset_name = "102021990_NEG650312660474055399"
+dataset_name = "102019596_NEG637748088500119037"
 dataset_path = Path("dataset") / "sample_group" / dataset_name
 
 """
@@ -891,7 +891,7 @@ simulator script. This ensures that all example scripts can be run without manua
 #     )
 
 pixel_scale = 0.1
-mask_radius = 6.0
+mask_radius = 3.0
 mask_centre = (0.0, 0.0)
 redshift_lens = 0.5
 redshift_source = 1.0

@@ -52,7 +52,7 @@ except ImportError:
 # USER SETTINGS — edit these before running
 # ─────────────────────────────────────────────────────────────────────────────
 
-dataset_name = "102021990_NEG650312660474055399"
+dataset_name = "102019596_NEG637748088500119037"
 dataset_path = path.join("..", "..", "..", "dataset", "sample_group", dataset_name)
 
 pixel_scales = 0.1   # arcsec / pixel
@@ -275,7 +275,7 @@ def main():
     # ── Load raw data ──────────────────────────────────────────────────────
     data_fits = path.join(dataset_path, "data.fits")
     print(f"\nLoading: {data_fits}")
-    raw_data = al.Array2D.from_fits(file_path=data_fits, pixel_scales=pixel_scales)
+    raw_data = al.Array2D.from_fits(file_path=data_fits, pixel_scales=pixel_scales, hdu=1)
     raw_data = al.Array2D(
         values=np.nan_to_num(raw_data.native, nan=0.0, posinf=0.0, neginf=0.0),
         mask=raw_data.mask,
