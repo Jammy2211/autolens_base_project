@@ -1,5 +1,9 @@
-<!-- Archived 2026-09-03 from CHOOSING_YOUR_AI_TOOL.md (repository root) for reinstatement when
-     conversation-assistant support returns — see autolens_assistant#120 -->
+<!-- Archived 2026-09-03 from CHOOSING_YOUR_AI_TOOL.md (repository root) (autolens_assistant#120). Marked UNSUPPORTED on
+     2026-09-10: conversational chat routes were retired under the agentic-only support policy and are not
+     coming back as supported onboarding. Kept for reference only; links inside may point at other archived pages. -->
+
+> **Archived and unsupported (2026-09-10).** Historical text; see the [README](../../README.md) for the supported
+> agentic setup.
 
 # Choosing Your AI Tool
 
@@ -35,11 +39,11 @@ to get a full setup guide.
 
 | Option | Cost           | How well it works                                                                        |
 |---|----------------|------------------------------------------------------------------------------------------|
-| **[Claude chat](../setup/claude_chat_paid.md)** | Paid           | Works brilliantly via repo sync or input (Project knowledge)                             |
-| **[ChatGPT](../setup/chatgpt_paid_connector.md)** | Paid           | Works brilliantly via GitHub sync (different from the custom GPT)                        |
-| **[Claude chat](../setup/claude_chat_free.md)** | Free           | Works, but requires project setup and goes through the free tokens quickly               |
-| **[ChatGPT custom GPT](../setup/chatgpt_custom_gpt.md)** | Free           | Works, but not yet able to do all tasks (experimental)                                   |
-| **[Paste the bundle](../setup/paste_bundle.md)** | Free | Reliable fallback for any AI chat |
+| **[Claude chat](chat/claude_chat_paid.md)** | Paid           | Works brilliantly via repo sync or input (Project knowledge)                             |
+| **[ChatGPT](chat/chatgpt_paid_connector.md)** | Paid           | Works brilliantly via GitHub sync (different from the custom GPT)                        |
+| **[Claude chat](chat/claude_chat_free.md)** | Free           | Works, but requires project setup and goes through the free tokens quickly               |
+| **[ChatGPT custom GPT](chat/chatgpt_custom_gpt.md)** | Free           | Works, but not yet able to do all tasks (experimental)                                   |
+| **[Paste the bundle](chat/paste_bundle.md)** | Free | Reliable fallback for any AI chat |
 
 Once set up: [first prompts to try](../setup/first_prompts.md) · something misbehaving?
 [troubleshooting](../setup/troubleshooting.md).

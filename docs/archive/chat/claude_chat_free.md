@@ -1,3 +1,13 @@
+<!-- ARCHIVED 2026-09-10 — UNSUPPORTED. Conversational chat routes (ChatGPT / Claude chat with a GitHub
+     connector, the custom GPT, pasted bundles, Claude Project knowledge packs) were retired when the assistants
+     moved to an agentic-only support policy. This page is kept for reference only: it is not maintained, the
+     bundles it refers to (`chat_pack/`, `llms-chat.txt`, `AGENTS_CHAT.md`) no longer exist in the repository, and
+     the setup it describes is not a supported way to use the assistant. Use a coding agent instead — see the
+     top-level README "Getting Started". -->
+
+> **Archived and unsupported (2026-09-10).** This describes a retired conversational-chat route. See the
+> [README](../../../README.md) for the supported agentic setup.
+
 # Claude chat — Free plan (Project + knowledge pack)
 
 Run the assistant inside claude.ai on the **Free plan**: a curated pack of this repository is
@@ -10,11 +20,11 @@ teaches concepts faithfully — **but it goes through the free token allowance q
 usage limits are unpublished and vary with load (in the region of a few dozen messages per 5
 hours), and every message carries the pack. Fine for planning sessions and short questions;
 long modelling conversations will hit the ceiling — that is where a
-[paid plan](claude_chat_paid.md) or a free coding agent such as [OpenCode](opencode_cli.md) pays for itself.
+[paid plan](claude_chat_paid.md) or a free coding agent such as [OpenCode](../../setup/opencode_cli.md) pays for itself.
 
 ## Setup (~5 minutes, once)
 
-1. Download the files in [`chat_pack/`](../../chat_pack/) (11 files, ~61k tokens total).
+1. Download the files in `chat_pack/` (removed — see the archive notice) (11 files, ~61k tokens total).
    Easiest way without git: download the repository ZIP from the green **Code** button on
    GitHub and take that folder.
 2. In Claude, create a **Project** (Free allows up to 5), then upload every file from
@@ -35,7 +45,7 @@ the same project knowledge.
 > **Notes.** Claude Projects can't be shared on Free or Pro (sharing is a Team/Enterprise
 > feature), so each person does this once for themselves. The Free tier's GitHub connector is
 > missing features which hurt performance, so use the Project + knowledge pack here (see
-> [Troubleshooting](troubleshooting.md)); on a paid plan the connector works excellently —
+> [Troubleshooting](../../setup/troubleshooting.md)); on a paid plan the connector works excellently —
 > see [Claude chat — paid plans](claude_chat_paid.md).
 
 ## What it can and can't do
@@ -56,5 +66,5 @@ and then given that I'm a new user give me an overview of the different ways we 
 perform strong lens modeling of this system.
 ```
 
-More examples: [First prompts to try](first_prompts.md). If anything misbehaves:
-[Troubleshooting](troubleshooting.md).
+More examples: [First prompts to try](../../setup/first_prompts.md). If anything misbehaves:
+[Troubleshooting](../../setup/troubleshooting.md).

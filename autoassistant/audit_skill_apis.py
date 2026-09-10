@@ -801,14 +801,14 @@ def write_baseline(root: Path) -> Path:
 def render_symbol_dump() -> str:
     """Render the installed stack's public API surface as Markdown.
 
-    The chat bundle (`autoassistant/chat_bundle.py`) ships this page so a
-    no-execution harness has the *current* symbol list to check itself against,
-    rather than trusting prose that has to be hand-maintained. The baseline JSON
-    records only a hash and a count; this renders the names themselves.
+    A generated page an agent on a harness without the PreToolUse code gate can
+    grep to check that a symbol exists, rather than trusting prose that has to
+    be hand-maintained. The baseline JSON records only a hash and a count; this
+    renders the names themselves.
 
     Raises SystemExit if the stack is not importable — a symbol dump must never
-    be written from a partial import, or the bundle would advertise a truncated
-    API surface as complete.
+    be written from a partial import, or it would advertise a truncated API
+    surface as complete.
     """
     versions: dict[str, str] = {}
     for name in VERSIONED_MODULES:
@@ -829,11 +829,10 @@ def render_symbol_dump() -> str:
         "the assistant content was validated against — use it to check whether a symbol",
         "you are about to write actually exists.",
         "",
-        # Deliberately no generation date: this page is committed and compared
-        # byte-for-byte by `chat_bundle.py --check`, so a rendered-on date would
-        # make the check fail every day after it was written. The stack version
-        # below is the provenance that actually matters — it changes when the
-        # surface changes, and not otherwise.
+        # Deliberately no generation date: if this page is committed and diffed,
+        # a rendered-on date would make it differ every day after it was written.
+        # The stack version below is the provenance that actually matters — it
+        # changes when the surface changes, and not otherwise.
         "- Stack versions: "
         + ", ".join(f"`{k}` {v}" for k, v in sorted(versions.items())),
         "",
@@ -1495,8 +1494,8 @@ def main() -> int:
         "--dump-symbols",
         action="store_true",
         help="Emit the installed stack's public API surface as Markdown (to --out, else "
-        "stdout) and exit. Shipped in the chat bundle so no-execution harnesses can check "
-        "a symbol exists; generated, never hand-maintained.",
+        "stdout) and exit. Lets an agent on a harness without the code-gate hook check "
+        "that a symbol exists; generated, never hand-maintained.",
     )
     parser.add_argument(
         "--check-version",

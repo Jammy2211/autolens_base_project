@@ -10,16 +10,33 @@ This repository is the **PyAutoLens Assistant**: an AI assistant which **lets yo
 
 ## Getting Started
 
-### Choosing Your AI Tool
+The assistant runs inside an **AI coding agent** — a tool that reads this repository, executes Python on your
+computer and inspects the results. That is what lets it install **PyAutoLens**, plot your `.fits` data, run lens
+models and look at the figures they produce. You do not have to run anything to use it: asking questions, planning an
+analysis, discussing a paper or learning in Teacher Mode all happen inside the same agent.
 
-There are two kinds of AI tool you could use the assistant with:
+Three steps:
 
-* **Conversational AI assistant:** Use a browser-based tool such as **ChatGPT** or **Claude** to ask questions, plan analyses, and generate scripts that you transfer to your computer and run manually.
-* **CLI coding agent:** Use a terminal-based agent such as **Claude Code** or **Codex**. It can work directly on your computer to inspect `.fits` data, write and execute scripts, diagnose errors, run lens models, and inspect their results.
+1. **Choose Claude Code or Codex.** These are the two recommended agents and the ones the assistant is developed
+   and tested against — see the setup pages for [Claude Code](docs/setup/claude_code.md) and
+   [Codex](docs/setup/codex_cli.md). For sustained scientific work you should expect to pay for one of them, but how
+   depends on your situation: a personal subscription, access through your institution or team, or usage-based API
+   billing. Check the provider's current plans rather than assuming a subscription is the only route. Desktop and
+   IDE versions of either agent are fine, provided they can read this repository and execute code.
+2. **Open the assistant workspace.** Clone this repository and start the agent inside it:
 
-**Both kinds are supported, and both currently require a paid plan.** The recommended route is a CLI coding agent: the paid-subscription agents **[Claude Code](docs/setup/claude_code.md)** and **[Codex](docs/setup/codex_cli.md)**, which install **PyAutoLens**, run fits and inspect their results directly on your computer. Conversation assistants work too: **ChatGPT** on a paid plan (Plus/Pro/Team) reads this repository through its [GitHub connector](docs/setup/chatgpt_paid_connector.md), and **Claude** chat on a paid plan (Pro/Max/Team) reads it live through its [GitHub connector](docs/setup/claude_chat_paid.md).
+   ```bash
+   git clone https://github.com/PyAutoLabs/autolens_assistant.git
+   cd autolens_assistant
+   claude        # or: codex
+   ```
 
-**Free options are being tested** but do not yet have first-class support: the free coding agent **OpenCode** is the most promising (see [Free AI tools](#free-ai-tools) at the bottom of this README), and the free chat routes are listed under [Conversation Assistants](#conversation-assistants).
+   The agent loads the assistant's instructions automatically. If `PyAutoLens` is not already installed, the
+   assistant will install it for you after your first prompt.
+3. **Submit the starting prompt** below.
+
+If you cannot use either agent, [OpenCode](docs/setup/opencode_cli.md) is an **experimental alternative** whose
+client is free — see [Experimental alternatives](#experimental-alternatives) for what that does and does not mean.
 
 ### Using PyAutoLens Assistant
 
@@ -32,21 +49,7 @@ ships with this repository in `dataset/imaging/cosmos_web_ring`:
 Take note of the **lens galaxy, lensed source galaxy, extra galaxy** and the **1.8" circular mask**, your first 
 interactions with the `autolens_assistant` may ask you about how to handle these in your analysis!
 
-The walkthrough below uses a CLI coding agent; if you are working in a conversation assistant instead, see [Conversation Assistants](#conversation-assistants).
-
-### AI Coding Agent (CLI)
-
-`autolens_assistant` supports the **Claude Code** and **Codex** coding agents.
-
-Once you have your coding agent setup, clone the `autolens_assistant` repo:
-
-```bash
-git clone https://github.com/PyAutoLabs/autolens_assistant.git
-cd autolens_assistant
-```
-
-Next, open your AI coding agent in your terminal inside the `autolens_assistant` folder you just cloned. 
-If `PyAutoLens` is not already installed, the coding agent will use `autolens_assistant` to install it after you submit your first prompt.
+### Starting prompt
 
 Here is a good initial prompt to try it out, noting that data for the COSMOS-Web Ring is included in this repository as an example:
 
@@ -176,7 +179,11 @@ results and score. Run them against different AI agents and models — or the
 same model on different days — and the committed run records in
 `benchmarks/runs/` plus the regenerated tables in `benchmarks/RESULTS.md` give
 you an evidence-backed comparison of how well each setup drives the assistant.
-The protocol is in [`benchmarks/README.md`](benchmarks/README.md).
+The protocol is in [`benchmarks/README.md`](benchmarks/README.md). **No run has
+been scored yet**, so nothing in this repository should be read as a measured
+performance claim for any agent or model; the support statements above describe
+which agents the assistant is developed and tested against day to day, not
+benchmark results.
 
 ## Scientific Context
 
@@ -212,45 +219,31 @@ spotting when a result has caveats.
 ## How does PyAutoLens-Assistant actually work?
 
 The `autolens-assistant` starts with the general knowledge and reasoning capabilities of 
-the underlying foundation model you call it with (e.g. ChatGPT's GPT5.6Sol model, Claude's Opus 4.8 model). 
+the underlying foundation model your coding agent runs (e.g. an OpenAI model in Codex, a Claude model in Claude Code). 
 The `autolens-assistant` supplements this with the scientific wiki above and two more sets of AI-readable markdown. 
 The folder `wiki/core` provides it with a quick look-up mechanism of the PyAutoLens API documentation. The folder
 `skills` pairs it with the end-to-end analysis scripts found in the [`autolens_workspace`](https://github.com/PyAutoLabs/autolens_workspace). When the `autolens-assistant` 
 receives your prompt, it scans these folders to give you the best possible answer
 you need. The JOSS paper located in the `paper` folder provides a more detailed description.
 
-## Conversation Assistants
+## Experimental alternatives
 
-Conversation assistants such as **ChatGPT** and **Claude** used in a browser **are supported**, on a paid plan. In
-chat the assistant does the thinking work — planning models, writing current-API scripts for you to run, explaining
-concepts and reviewing your errors and figures. It cannot run fits or read the `.fits` files on your computer; for
-that, pair it with a coding agent, which shares the same subscription.
+**Conversational chat routes are no longer supported.** Ordinary ChatGPT or Claude chat with a GitHub connector, the
+PyAutoLens custom GPT and pasted bundles were previously offered as ways to use the assistant. They cannot execute
+code or inspect data, so the scientific safeguards the assistant relies on (current-API verification, looking at the
+data before fitting, checking results) could not be enforced. The old instructions are kept for reference under
+[`docs/archive/`](docs/archive/README.md) with an unsupported notice; they are not maintained.
 
-| Option | Cost | How well it works |
-|---|---|---|
-| **[ChatGPT](docs/setup/chatgpt_paid_connector.md)** | Paid (Plus/Pro/Team) | Works brilliantly via GitHub sync (different from the custom GPT) |
-| **[Claude chat](docs/setup/claude_chat_paid.md)** | Paid (Pro/Max/Team) | Works brilliantly via its GitHub connector |
-| **[Claude chat](docs/setup/claude_chat_free.md)** | Free | Works via project setup, but the free tier's GitHub connector is missing features that hurt performance, and it goes through the free tokens quickly |
-| **[ChatGPT custom GPT](docs/setup/chatgpt_custom_gpt.md)** | Free | Works, but not yet able to do all tasks (experimental) |
-| **[Paste the bundle](docs/setup/paste_bundle.md)** | Free | Reliable fallback for any AI chat |
+**OpenCode** ([setup](docs/setup/opencode_cli.md)) is an open-source coding agent whose *client* is free. Model access
+is separate: you connect it to a provider, and the cost, capability and availability of the model are the
+provider's, not OpenCode's. Some providers offer free models, often as limited-time offerings, and not every model
+can drive the assistant — in particular it must handle multi-step tool use and be able to look at figures, which
+free models frequently cannot. **No free provider/model configuration has yet been validated against this
+assistant's benchmarks**, so treat OpenCode as compatible rather than tested. If you try it, please report what
+worked (and what did not) in an [issue](https://github.com/PyAutoLabs/autolens_assistant/issues).
 
-On paid plans both ChatGPT and Claude read this repository live through their GitHub connectors; on free plans use the
-routes in the table.
-
-The free routes are worth knowing about but are degraded: the experimental
-**[PyAutoLens AI Assistant custom GPT](https://chatgpt.com/g/g-6a74c33c58c48191b8cd353e7b46f18b-pyautolens-ai-assistant)**
-is available on any ChatGPT plan, but be warned that its performance is currently not great and it cannot yet do
-everything the coding agents can.
-
-Once set up: [first prompts to try](docs/setup/first_prompts.md) · something misbehaving?
-[troubleshooting](docs/setup/troubleshooting.md).
-
-## Free AI tools
-
-We are actively testing free AI tools, but cannot yet provide first-class support for any of them. The free coding
-agent **[OpenCode](docs/setup/opencode_cli.md)** is the most promising option so far, with preliminary testing showing
-encouraging results — if you do not have a paid Claude Code or Codex subscription it is the one to try. The free chat
-routes are in [Conversation Assistants](#conversation-assistants) above.
+Maintainer-facing notes on evaluating further agents (including Gemini CLI) are in
+[`docs/evaluation/agent_evaluation.md`](docs/evaluation/agent_evaluation.md).
 
 ## Natural-language development ecosystem
 

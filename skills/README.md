@@ -123,7 +123,7 @@ to the assistant; the paired literature context is the dedicated
   `Samples`, dataset and FITS products from its output folder.
 - [`al_inspect_results_mcp.md`](./al_inspect_results_mcp.md) — the read-only
   results-inspector MCP server: browse fits, summaries, result images and bulk
-  subplot/FITS extraction from chat harnesses without code execution (Claude
+  subplot/FITS extraction from MCP clients without running Python (Claude
   Desktop first).
 - [`al_plot_tracer.md`](./al_plot_tracer.md) — plot ray tracing, critical curves,
   caustics, magnification maps.

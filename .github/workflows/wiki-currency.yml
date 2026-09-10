@@ -1,7 +1,7 @@
 # Wiki-currency check — the single home of the "is the wiki current?" rules.
 #
 # This workflow is the ONLY place the check logic lives (symbol audit, idiom deny-list,
-# provenance, chat-bundle currency). It versions with the content it grades, which is why
+# provenance, citations). It versions with the content it grades, which is why
 # it lives in autolens_assistant and not in the release hub. Two triggers feed it:
 #
 #   1. workflow_call  — invoked by PyAutoHands at stack-release time with the new version,
@@ -149,20 +149,6 @@ jobs:
           run "Idiom deny-list (--lint-idioms)"     --lint-idioms
           run "Provenance (--check-provenance)"     --check-provenance
           run "Citation paths (--check-citations)"  --check-citations
-
-          # The free-tier chat bundles embed a generated snapshot of the public API
-          # surface, so they go stale exactly when the wiki does — same check, same
-          # report. Also catches AGENTS.md → AGENTS_CHAT.md rule drift and dead links.
-          echo "## Chat bundle currency (chat_bundle.py --check)" >> "$REPORT"
-          echo '```' >> "$REPORT"
-          python autoassistant/chat_bundle.py --check >> "$REPORT" 2>&1
-          bundle_rc=$?
-          echo '```' >> "$REPORT"
-          if [ "$bundle_rc" -ne 0 ]; then
-            echo "**FAILED** — regenerate with \`make chat-bundle\` (needs the stack installed)." >> "$REPORT"
-            fail=1
-          fi
-          echo >> "$REPORT"
 
           cat "$REPORT" >> "$GITHUB_STEP_SUMMARY"
           if [ "$fail" -ne 0 ]; then
