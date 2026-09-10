@@ -29,6 +29,7 @@ benchmarks/
 | [`prompts/medium_slacs0946_subhalo.md`](prompts/medium_slacs0946_subhalo.md) | assistant | medium | pipeline design beyond bundled workflows: Bayesian model comparison, runtime/HPC judgment |
 | [`prompts/hard_group_multi.md`](prompts/hard_group_multi.md) | assistant | hard | cross-package synthesis: group × multi × imaging × interferometer, simulation + joint modeling |
 | [`prompts/teacher_workflow.md`](prompts/teacher_workflow.md) | teacher | easy | pedagogy: end-to-end workflow walkthrough on simulated Euclid-like data |
+| [`prompts/harness_smoke.md`](prompts/harness_smoke.md) | assistant | easy | agent qualification: grounded answering, a small fit with figure inspection, recovery from a stale-API error — the evidence behind the README's support statements (protocol: [`docs/evaluation/agent_evaluation.md`](../docs/evaluation/agent_evaluation.md)) |
 
 Each card carries the verbatim prompt, what it measures, and a 100-point
 rubric split into **machine-checkable** rows (artifacts that exist or don't)
@@ -99,4 +100,6 @@ and **judged** rows (quality graded by a human or a stated judge model).
   harnesses and the assistant itself evolve (the chronological table; the
   cheap teacher benchmark is the recommended drift probe).
 - **Same model, different harness** — how much the agent runtime (Claude
-  Code, Codex CLI, Gemini CLI, …) contributes beyond raw model quality.
+  Code, Codex, OpenCode, …) contributes beyond raw model quality — and, via the
+  `harness-smoke` card, whether an agent qualifies for the README's support
+  statements at all.

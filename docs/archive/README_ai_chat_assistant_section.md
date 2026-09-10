@@ -1,5 +1,9 @@
-<!-- Archived 2026-09-03 from README.md (section "#### AI Chat Assistant") for reinstatement when
-     conversation-assistant support returns — see autolens_assistant#120 -->
+<!-- Archived 2026-09-03 from README.md (section "#### AI Chat Assistant") (autolens_assistant#120). Marked UNSUPPORTED on
+     2026-09-10: conversational chat routes were retired under the agentic-only support policy and are not
+     coming back as supported onboarding. Kept for reference only; links inside may point at other archived pages. -->
+
+> **Archived and unsupported (2026-09-10).** Historical text; see the [README](../../README.md) for the supported
+> agentic setup.
 
 #### AI Chat Assistant
 

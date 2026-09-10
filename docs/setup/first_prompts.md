@@ -1,7 +1,8 @@
 # First prompts to try
 
-Once any option from the [setup guide](../archive/CHOOSING_YOUR_AI_TOOL.md) is configured, these all
-work immediately — the COSMOS-Web Ring data ships with the repository:
+Once [Claude Code](claude_code.md), [Codex](codex_cli.md) or (experimentally)
+[OpenCode](opencode_cli.md) is open inside the repository, these all work immediately — the
+COSMOS-Web Ring data ships with the repository:
 
 ```text
 Find the data on the COSMOS-Web ring, give me a short script to plot it in PyAutoLens,
@@ -18,14 +19,15 @@ simulating Euclid-like imaging of a simple strong lens, plotting it, and fitting
 
 ```text
 I have HST imaging of a galaxy-scale lens. Help me plan the model: lens light, mass, and
-source. Ask me what you need to know about the data first.
+source. Ask me what you need to know about the data first — don't run anything yet.
 ```
 
-The last one exercises the behaviour that matters most. On **real data** the assistant is
-required to make you look at the image before it composes a fit, and to settle two things
-with you: whether there are extra galaxies or artefacts in the frame, and how big the mask
-should be. In a browser chat it can't plot your data itself, so it will ask you to. That is
-the rule working, not the assistant being unhelpful.
+The last one exercises two things that matter. First, you can hold a planning discussion inside
+the agent without it executing anything — say so, as the prompt does. Second, on **real data**
+the assistant is required to make you look at the image before it composes a fit, and to settle
+two things with you: whether there are extra galaxies or artefacts in the frame, and how big the
+mask should be. It will plot the data itself and show you the file; that is the rule working,
+not the assistant being slow.
 
 More ambitious examples — dark-matter subhalo detection, joint imaging + interferometer +
 weak-lensing fits — are in the [README](../../README.md).

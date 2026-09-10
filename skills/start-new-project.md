@@ -167,7 +167,7 @@ This project ships the assistant's PyAuto* **API code-gate** (`.claude/settings.
 Bash runs generated PyAuto* code, a hook resolves the assistant (same order as above) and
 validates the symbols against the installed stack, denying code written from memory. It fails
 open if no assistant clone is found. Only Claude Code runs `.claude/` hooks — on any other
-harness (Codex, Gemini, chat), self-enforce it: run
+harness (Codex, OpenCode, Gemini CLI), self-enforce it: run
 `python <resolved-assistant>/autoassistant/audit_skill_apis.py --code "<snippet>"` (or
 `--file <script.py>`) on generated PyAuto* code before executing it; never guess symbols.
 
@@ -373,7 +373,7 @@ rests on two files and **no transcript/hash machinery**:
    session, never appended. A journal entry is not finished until `state.md` describes the
    project after it: what is settled, what is running (with its output dir / job ID and what
    it unblocks), what is carried forward, the traps not to repeat, and one index line for the
-   new entry. This is the file that makes a fresh chat resume without being asked.
+   new entry. This is the file that makes a fresh session resume without being asked.
 
 Do not invent a parallel log, and do not write per-run manifest files — the run table and
 `state.md` are the whole record.

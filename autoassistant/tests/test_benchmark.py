@@ -153,6 +153,7 @@ def test_repo_prompt_cards_parse():
         "assistant-medium-slacs0946-subhalo",
         "assistant-hard-group-multi",
         "teacher-basic-workflow",
+        "harness-smoke",
     }
     for card in cards.values():
         machine = sum(r.max_points for r in card.rubric if r.machine)

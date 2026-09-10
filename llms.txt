@@ -1,79 +1,60 @@
 # PyAutoLens Assistant
 
-> **If your AI can't browse GitHub, paste this entire file into the chat as context.** It is
-> the front door of the PyAutoLens Assistant — an AI assistant for doing strong-lens science
-> with PyAutoLens (agent instructions, task skills, and a reference wiki in one repo you drive
-> by conversation). It routes you by intent: start a chat session, see what the assistant can
-> do, read the reference, or jump to runnable examples.
+> The front door of the PyAutoLens Assistant — an AI assistant for doing strong-lens science
+> with PyAutoLens (agent instructions, task skills and a reference wiki in one repository that
+> you drive in natural language from inside an AI coding agent). It routes by intent: set up,
+> see what the assistant can do, read the reference, or jump to runnable examples.
 
-Every link below is an **absolute raw URL**, so it is fetchable from a chat that has browsing
-but no repository connector. (Relative links and `blob/` page URLs are the two things that
-reliably fail there — `blob/` returns a JavaScript shell, not the file.)
+## How to use it
 
-## Pick your harness
+The assistant is supported **only inside an AI coding agent** that can read this repository and
+execute Python: **Claude Code** or **Codex** (recommended and tested), or **OpenCode** as an
+experimental alternative. Clone the repository and open the agent inside it — `AGENTS.md`
+(via `CLAUDE.md` for Claude Code) loads automatically and nothing else is needed:
 
-| You are using | Do this |
-|---|---|
-| **A coding agent** (Claude Code, Codex, OpenCode) | Clone the repo and open the agent inside it. `AGENTS.md` loads automatically; nothing below is needed. |
-| **Chat with a GitHub connector** (ChatGPT or Claude on a paid plan) | Enable the connector, then use the bootstrap prompt below. |
-| **Chat with browsing but no connector** | Use the bootstrap prompt below — it points at raw URLs, which fetch fine. |
-| **Chat with neither** (incl. ChatGPT Free) | Paste [`llms-chat.txt`](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/llms-chat.txt) — a self-contained ~6k-token bundle carrying the rules and the current API surface. |
-| **A Claude Project, or a custom GPT** | Upload the files in [`chat_pack/`](https://github.com/PyAutoLabs/autolens_assistant/tree/main/chat_pack) as knowledge. |
-
-Only the paid-subscription CLI coding agents **Claude Code** and **Codex** are supported today; setup
-pages for each live under `docs/setup/`. The archived guide to every other platform (kept for
-reinstatement once conversation-assistant support returns):
-**[`docs/archive/CHOOSING_YOUR_AI_TOOL.md`](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/docs/archive/CHOOSING_YOUR_AI_TOOL.md)**
-
-## Bootstrap prompt
-
-Naming this file explicitly **matters**: an assistant does not reliably find `llms.txt` on its
-own, and results are markedly better when it is pointed here first.
-
-```text
-Start by reading the front door of the autolens_assistant repository:
-https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/llms.txt
-
-Follow its read order (AGENTS_CHAT.md → the relevant skill → wiki) and its API rules,
-then use the repository to answer my PyAutoLens questions. First tell me whether
-you can actually read llms.txt — if you can't, say so plainly and don't answer
-from memory.
+```bash
+git clone https://github.com/PyAutoLabs/autolens_assistant.git
+cd autolens_assistant
+claude        # or: codex / opencode
 ```
 
-## How to behave in chat
+Setup pages: [`docs/setup/claude_code.md`](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/docs/setup/claude_code.md)
+· [`docs/setup/codex_cli.md`](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/docs/setup/codex_cli.md)
+· [`docs/setup/opencode_cli.md`](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/docs/setup/opencode_cli.md).
+Desktop and IDE versions of these agents are fine when they provide the same repository and
+execution access. Browser chats with a GitHub connector, the custom GPT and pasted bundles are
+**no longer supported** (retired 2026-09-10; see
+[`docs/archive/`](https://github.com/PyAutoLabs/autolens_assistant/tree/main/docs/archive)).
 
-Read order: [AGENTS_CHAT.md](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/AGENTS_CHAT.md)
-(chat-mode rules; the executable-harness version is
-[AGENTS.md](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/AGENTS.md)) →
+Agentic does not mean autonomous: you can ask questions, plan an analysis or learn in
+**Teacher Mode** without running anything — say so in your prompt.
+
+## If you are an agent reading this file
+
+Read order: [AGENTS.md](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/AGENTS.md)
+(safety rules, modes, conventions) →
 [skills/README.md](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/skills/README.md)
 → the relevant skill → [wiki/](https://github.com/PyAutoLabs/autolens_assistant/tree/main/wiki).
-
-**Lead by engaging.** Ask what the user is trying to do, ask them to describe or plot their
-data (you can't inspect files on their machine), plan the model, and draft the scripts — do
-this *first*, and never open a reply with what you can't do. The assistant can also route to
-examples, explain lensing, and review pasted scripts / errors / figures. It cannot run code or
-guarantee drafts against the installed PyAutoLens version, so switching to a local coding agent
-(Claude Code, Codex, or Codex web with the repo connected) is the step for **actually running
-the fit or iterating live** — raise that handoff when execution becomes the blocker, not as an
-opening disclaimer.
 
 **⚠️ API currency — read before writing any PyAutoLens code.** Older PyAutoLens releases are
 heavily represented in model training data and their API is **out of date**. Do **not** write
 PyAutoLens from memory — mirror the exact calls shown in the relevant
-[`skills/`](https://github.com/PyAutoLabs/autolens_assistant/tree/main/skills) file, and check
-symbols against the generated
-[current API surface](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/chat_pack/01_api_surface.md).
-The single most common stale error: **plotting is functional now.** Use
+[`skills/`](https://github.com/PyAutoLabs/autolens_assistant/tree/main/skills) file and verify
+symbols against the installed library (`dir()`, or
+`python autoassistant/audit_skill_apis.py --code "<snippet>"` on a harness without the
+PreToolUse code gate). The single most common stale error: **plotting is functional now.** Use
 `aplt.subplot_fit_imaging(fit=fit, output_path=..., output_filename=..., output_format="png")`
 and `aplt.subplot_imaging_dataset(dataset=..., ...)`. The old object-oriented plotters —
 `aplt.FitImagingPlotter`, `aplt.ImagingPlotter`, `aplt.TracerPlotter`, `aplt.MatPlot2D`,
-`aplt.Output` — have been **removed**; never emit them. If you can't point at a `skills/`
-example for a call, say it's unverified rather than guessing.
+`aplt.Output` — have been **removed**; never emit them.
+
+**Real data → inspect before fitting.** Plot the dataset and settle contaminants and the mask
+extent with the user before composing any fit; if you cannot execute code in this session, ask
+the user to do it and report back — the gate is never waived.
 
 ## Agent instructions (canonical)
 
-- [AGENTS.md](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/AGENTS.md): safety rules, modes, and repository conventions — the source of truth for harnesses that can execute.
-- [AGENTS_CHAT.md](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/AGENTS_CHAT.md): the chat-mode subset — the same rules, minus everything that needs a shell.
+- [AGENTS.md](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/AGENTS.md): safety rules, modes, and repository conventions — the source of truth.
 
 ## What it can do
 
@@ -82,9 +63,9 @@ example for a call, say it's unverified rather than guessing.
 ## Reference
 
 - [wiki/core/index.md](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/wiki/core/index.md): curated PyAuto* reference — stack, lensing concepts, API catalogues, operations.
-- [wiki/literature/index.md](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/wiki/literature/index.md): strong-lensing science wiki — concepts, named entities (surveys, lenses), bibliography. **Large — fetch single pages, never the whole tree.**
+- [wiki/literature/index.md](https://raw.githubusercontent.com/PyAutoLabs/autolens_assistant/main/wiki/literature/index.md): strong-lensing science wiki — concepts, named entities (surveys, lenses), bibliography. **Large — read single pages, never the whole tree.**
 
 ## Runnable examples & tutorials (elsewhere)
 
-- [autolens_workspace navigator](https://raw.githubusercontent.com/PyAutoLabs/autolens_workspace/main/llms.txt): paste-friendly task router for end-to-end example scripts and notebooks.
+- [autolens_workspace navigator](https://raw.githubusercontent.com/PyAutoLabs/autolens_workspace/main/llms.txt): task router for end-to-end example scripts and notebooks.
 - [HowToLens](https://github.com/PyAutoLabs/HowToLens): from-first-principles strong-lensing lecture series.

@@ -1,3 +1,13 @@
+<!-- ARCHIVED 2026-09-10 — UNSUPPORTED. Conversational chat routes (ChatGPT / Claude chat with a GitHub
+     connector, the custom GPT, pasted bundles, Claude Project knowledge packs) were retired when the assistants
+     moved to an agentic-only support policy. This page is kept for reference only: it is not maintained, the
+     bundles it refers to (`chat_pack/`, `llms-chat.txt`, `AGENTS_CHAT.md`) no longer exist in the repository, and
+     the setup it describes is not a supported way to use the assistant. Use a coding agent instead — see the
+     top-level README "Getting Started". -->
+
+> **Archived and unsupported (2026-09-10).** This describes a retired conversational-chat route. See the
+> [README](../../../README.md) for the supported agentic setup.
+
 # ChatGPT — the custom GPT (any plan, experimental)
 
 **The GPT is live:**
@@ -30,13 +40,13 @@ and then given that I'm a new user give me an overview of the different ways we 
 perform strong lens modeling of this system.
 ```
 
-More examples: [First prompts to try](first_prompts.md). If anything misbehaves:
-[Troubleshooting](troubleshooting.md).
+More examples: [First prompts to try](../../setup/first_prompts.md). If anything misbehaves:
+[Troubleshooting](../../setup/troubleshooting.md).
 
 ## Build recipe (maintainers)
 
 For rebuilding the GPT after a `chat_pack/` regeneration — regenerate the inputs first (see
-"Maintaining the chat bundles" in [`modes/maintainer.md`](../../modes/maintainer.md)):
+"Maintaining the chat bundles" in [`modes/maintainer.md`](../../../modes/maintainer.md)):
 
 1. **Create a GPT** → *Configure*.
 2. **Instructions**: paste the contents of `chat_pack/00_instructions.md`.
