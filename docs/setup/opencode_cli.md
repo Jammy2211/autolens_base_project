@@ -48,6 +48,8 @@ opencode
 
 ## Your first prompt
 
+<sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
+
 ```text
 Find the data on the Cosmos-Web ring, give me a short script to plot it in PyAutoLens
 and then given that I'm a new user give me an overview of the different ways we can

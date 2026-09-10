@@ -53,14 +53,18 @@ interactions with the `autolens_assistant` may ask you about how to handle these
 
 Here is a good initial prompt to try it out, noting that data for the COSMOS-Web Ring is included in this repository as an example:
 
-```
+<sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
+
+```text
 Find the data on the Cosmos-Web ring, give me a short script to plot it in PyAutoLens and then given that I'm a 
 new user give me an overview of the different ways we can perform strong lens modeling of this system.
 ```
 
 If you want to see `autolens_assistant` perform end-to-end lens modeling:
 
-```
+<sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
+
+```text
 I want to model the F277W and F444W JWST imaging of the COSMOS-Web Ring independently, which are in 
 the folder dataset/imaging/cosmos_web_ring. Model the lens light with a multi-Gaussian expansion (MGE), its mass with a singular 
 isothermal ellipsoid plus external shear, and model the source also using an MGE. For speed, run the analysis on my 
@@ -87,7 +91,9 @@ A good first session if you are new to PyAutoLens and want to learn the modellin
 generate yourself. Starting with a simulation keeps things simple: the data are clean, the true model is known, and
 there are no observational complications, allowing you to focus on understanding each step.
 
-```
+<sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
+
+```text
 Teacher mode.
 
 I'm new to PyAutoLens and want to learn the basic workflow end-to-end. Can you
@@ -106,7 +112,9 @@ The lens modelling required for this analysis may take hours or days. The final 
 estimate the runtime and, if necessary, guide you through setting up and running the analysis on a High Performance 
 Computing (HPC) system to which you have access.
 
-```
+<sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
+
+```text
 Assistant mode.
 
 The strong lens SDSSJ0946+1006 famously has a dark matter subhalo
@@ -136,7 +144,9 @@ These are not isolated capabilities: they can be combined in a single joint infe
 was navigating the different APIs and integrating them into a single Python script. With `autolens_assistant`, 
 you can instead describe the analysis in **natural language** and let the assistant construct the required workflow:
 
-```
+<sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
+
+```text
 Assistant mode.
 
 Simulate imaging and interferometer data of a group-scale strong lens, which is composed of
@@ -166,7 +176,9 @@ companion, enabling readers to reproduce the study end to end or fork it as the 
 
 To start a science project, just add it to your input prompt:
 
-```
+<sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
+
+```text
 Start a science project for my SDSSJ0946+1006 analysis.
 ```
 
@@ -200,7 +212,9 @@ This **base** literature wiki can and should be extended by you, with papers tha
 specifically relevant to your scientific study. Doing this is simply, simply
 point the assistant to the papers and it'll ingest them for you:
 
-```
+<sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
+
+```text
 Ingest the following paper into the literature wiki so you can use it
 when we talk about subhalo detection:
 

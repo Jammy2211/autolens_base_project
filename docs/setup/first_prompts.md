@@ -4,11 +4,15 @@ Once [Claude Code](claude_code.md), [Codex](codex_cli.md) or (experimentally)
 [OpenCode](opencode_cli.md) is open inside the repository, these all work immediately — the
 COSMOS-Web Ring data ships with the repository:
 
+<sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
+
 ```text
 Find the data on the COSMOS-Web ring, give me a short script to plot it in PyAutoLens,
 and then, given that I'm a new user, give me an overview of the different ways we can
 perform strong lens modeling of this system.
 ```
+
+<sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
 
 ```text
 Teacher mode.
@@ -16,6 +20,8 @@ Teacher mode.
 I'm new to PyAutoLens and want to learn the basic workflow end-to-end. Walk me through
 simulating Euclid-like imaging of a simple strong lens, plotting it, and fitting it.
 ```
+
+<sub><b>Example Natural Language Prompt for Claude Code, Codex or other AI coding agent</b></sub>
 
 ```text
 I have HST imaging of a galaxy-scale lens. Help me plan the model: lens light, mass, and
